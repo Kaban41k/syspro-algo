@@ -8,7 +8,7 @@ def karatsuba_multiplication(n, m):
     if n_l == m_l == 1:
         return n * m
 
-    mask = 10 ** (max(n_l, m_l) // 2)
+    mask = 10 ** ((max(n_l, m_l) + 1) // 2)
 
     a = n // mask
     b = n % mask
@@ -21,10 +21,10 @@ def karatsuba_multiplication(n, m):
     x4 = x3 - x2 - x1
     return x1 * 10 ** n_l + x2 + x4 * mask
 
-
 assert karatsuba_multiplication(1234, 5678) == 7006652, "Wrong answer"
 assert karatsuba_multiplication(20, 140) == 2800 == karatsuba_multiplication(20, 140), "Wrong answer"
 assert karatsuba_multiplication(2, 100000000) == 200000000, "Wrong answer"
-assert karatsuba_multiplication(14000, 1) == 14000, "Wrong answer"
+assert karatsuba_multiplication(14000, 18) == 252000, "Wrong answer"
+assert karatsuba_multiplication(12345, 54) == 666630, "Wrong answer"
 
 print("ALL TESTS PASSED :D")
