@@ -1,17 +1,22 @@
+from mesonbuild.mintro import print_results
+
+
 def column_division(n, m):
     result = 0
-    ptr = len(str(n)) - len(str(m))
+    n = str(n)
+    ptr = 1
+    x = int(n[0])
 
-    while ptr >= 0:
-        if n // 10 ** ptr < m:
-            ptr -= 1
-            continue
-
-        result += 10 ** ptr
-        n -= m * 10 ** ptr
+    while ptr < len(n):
+        if x < m:
+            x = x * 10 + int(n[ptr])
+            ptr += 1
+            result *= 10
+        while x >= m:
+            result += 1
+            x -= m
 
     return result
-
 
 assert column_division(19822, 22) == 901, "Wrong answer"
 assert column_division(22, 22) == 1, "Wrong answer"
