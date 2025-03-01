@@ -1,5 +1,4 @@
 from random import randint
-import sys
 
 
 def get_digit(x, i):
@@ -8,7 +7,7 @@ def get_digit(x, i):
 
 def counting_digit_sort(arr, dig_i):
     n = len(arr)
-    res = [0 for i in range(n)]
+    res = [0 for _ in range(n)]
     c = {}
 
     for i in range(10):
