@@ -33,7 +33,7 @@ for i in range(START, END):
 
     so = 0
     for j in res:
-        so += (j - sr) ** 2
+        so += (j - sr * 10000) ** 2
     so = (so / REP_N) ** 0.5
     so = so // 1 / 10000
 
@@ -59,7 +59,7 @@ for i in range(START, END):
 
     so = 0
     for j in res:
-        so += (j - sr) ** 2
+        so += (j - sr * 10000) ** 2
     so = (so / REP_N) ** 0.5
     so = so // 1 / 10000
 
@@ -85,7 +85,7 @@ for i in range(START, END):
 
     so = 0
     for j in res:
-        so += (j - sr) ** 2
+        so += (j - sr * 10000) ** 2
     so = (so / REP_N) ** 0.5
     so = so // 1 / 10000
 
@@ -98,9 +98,8 @@ for i in range(START, END):
     results[i - START].append(str(sr) + " " * (8 - len(str(sr))) + str(so) + " " * (8 - len(str(so))) + str(sg))
     print(f"strassen Done")
 
-    print("-" * 15)
-
     print(f"{str(2 ** i)}x{str(2 ** i)} Done")
-    print(results[i - START])
+    print("results:", results[i - START])
+    print("-" * 15)
 
 format_table(benchmarks, algos, results)
