@@ -11,21 +11,29 @@ class Task:
 class UnionFind:
     def __init__(self, n):
         self.arr = list(range(n))
-        self.group_sizes = [1 for i in range(n)]
-        self.groups = [[i] for i in range(n)]
+        self.ranks = [0 for i in range(n)]
 
     def find(self, x):
-        return self.arr[x - 1]
+        x -= 1
+        a = []
+
+        while self.arr[x] != x:
+            a.append(x)
+            x = self.arr[x]
+
+        for i in a:
+            self.arr[i] = x
+        
+        return x
 
     def union(self, g1, g2):
-        if self.group_sizes[g1] < self.group_sizes[g2]:
-            g1, g2 = g2, g1
+        if self.ranks[g1] > self.ranks[g2]:
+            self.arr[g2] = g1
+        else:
+            self.arr[g1] = g2
 
-        for member in self.groups[g2]:
-            self.groups[g1].append(member)
-            self.arr[member] = g1
-
-        self.group_sizes[g1] += self.group_sizes[g2]
+        if self.ranks[g1] == self.ranks[g2]:
+            self.ranks[g2] += 1
 
 
 def simple_solution(taskSortedArr):
