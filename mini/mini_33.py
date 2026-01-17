@@ -1,3 +1,4 @@
+from ctypes.macholib.dyld import dyld_find
 from random import randint
 import time
 
@@ -37,6 +38,8 @@ class UnionFind:
         g1 = self.find(i1)
         g2 = self.find(i2)
 
+        dl = min(self.dfind(i1), self.dfind(i2))
+
         if self.ranks[g1] > self.ranks[g2]:
             self.arr[g2] = g1
         else:
@@ -44,6 +47,8 @@ class UnionFind:
 
         if self.ranks[g1] == self.ranks[g2]:
             self.ranks[g2] += 1
+
+        self.d_set(i1, dl)
 
     def d_set(self, i, dl):
         self.d[self.find(i)] = dl
@@ -87,7 +92,6 @@ def uf_solution(taskSortedArr):
 
         if result[dl] is None:
             result[dl] = i
-            uf.d_set(i, dl - 1)
 
         else:
             if uf.dfind(result[dl]) == -1:
@@ -106,14 +110,13 @@ def uf_solution(taskSortedArr):
                 dl = uf.dfind(result[dl])
                 result[dl] = i
 
+        uf.d_set(i, dl - 1)
+
         if dl + 1 != n and result[dl + 1] is not None:
             uf.union(i, result[dl + 1])
-            uf.d_set(i, dl - 1)
 
         if dl - 1 != -1 and result[dl - 1] is not None:
-            m = uf.dfind(result[dl - 1])
             uf.union(i, result[dl - 1])
-            uf.d_set(i, m)
 
     for i in range(n):
         result[i] = taskSortedArr[result[i]]
