@@ -29,24 +29,30 @@ add_node(nodes[2], Node(5))
 
 
 def num_of_topsorted_arrays(root):
-    weights = []
-
-    def calculate_weights(node):
-        weight = 1
+    def calculate_weights_and_nota(node):
+        weights = []
+        notas = []
 
         for i in node.children:
-            weight += calculate_weights(i)
+            weight, nota = calculate_weights_and_nota(i)
 
-        weights.append(weight)
-        return weight
+            weights.append(weight)
+            notas.append(nota)
 
-    root_weight = calculate_weights(root)
+        weight = sum(weights) + 1
 
-    result = factorial(root_weight)
-    for weight in weights:
-        result //= weight
+        nota = factorial(sum(weights))
 
-    return result
+        for n in weights:
+            nota /= factorial(n)
+
+        for nota_ch in notas:
+            nota *= nota_ch
+
+        return weight, nota
+
+    root_weight, root_nota = calculate_weights_and_nota(root)
+    return int(root_nota)
 
 
 print(num_of_topsorted_arrays(root))
