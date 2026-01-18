@@ -1,3 +1,4 @@
+from ctypes.macholib.dyld import dyld_find
 from random import randint
 import time
 
@@ -11,21 +12,46 @@ class Task:
 class UnionFind:
     def __init__(self, n):
         self.arr = list(range(n))
-        self.group_sizes = [1 for i in range(n)]
-        self.groups = [[i] for i in range(n)]
+        self.ranks = [0 for i in range(n)]
+        self.d = {}
+
+        for i in range(n):
+            self.d[i] = -1
 
     def find(self, x):
-        return self.arr[x - 1]
+        x -= 1
+        a = []
 
-    def union(self, g1, g2):
-        if self.group_sizes[g1] < self.group_sizes[g2]:
-            g1, g2 = g2, g1
+        while self.arr[x] != x:
+            a.append(x)
+            x = self.arr[x]
 
-        for member in self.groups[g2]:
-            self.groups[g1].append(member)
-            self.arr[member] = g1
+        for i in a:
+            self.arr[i] = x
 
-        self.group_sizes[g1] += self.group_sizes[g2]
+        return x
+
+    def dfind(self, x):
+        return self.d[self.find(x)]
+
+    def union(self, i1, i2):
+        g1 = self.find(i1)
+        g2 = self.find(i2)
+
+        dl = min(self.dfind(i1), self.dfind(i2))
+
+        if self.ranks[g1] > self.ranks[g2]:
+            self.arr[g2] = g1
+        else:
+            self.arr[g1] = g2
+
+        if self.ranks[g1] == self.ranks[g2]:
+            self.ranks[g2] += 1
+
+        self.d_set(i1, dl)
+
+    def d_set(self, i, dl):
+        self.d[self.find(i)] = dl
 
 
 def simple_solution(taskSortedArr):
@@ -57,48 +83,43 @@ def simple_solution(taskSortedArr):
 def uf_solution(taskSortedArr):
     n = len(taskSortedArr)
     uf = UnionFind(n)
-    d = {}
-    num_d = {}
     result = [None for i in range(n)]
     ptr_last = n - 1
     f = 0
 
     for i in range(n):
-        num_d[taskSortedArr[i]] = i
-        d[uf.find(i)] = -1
-
-    for i in range(n):
         dl = taskSortedArr[i].deadline - 1
 
         if result[dl] is None:
-            result[dl] = taskSortedArr[i]
-            d[uf.find(i)] = dl - 1
+            result[dl] = i
 
         else:
-            if d[uf.find(num_d[result[dl]])] == -1:
+            if uf.dfind(result[dl]) == -1:
                 f += taskSortedArr[i].fine
                 if result[ptr_last] is not None:
-                    ptr_last = d[uf.find(num_d[result[ptr_last]])]
+                    ptr_last = uf.dfind(result[ptr_last])
 
-                result[ptr_last] = taskSortedArr[i]
+                result[ptr_last] = i
                 dl = ptr_last
 
                 if result[ptr_last - 1] is not None:
-                    ptr_last = d[uf.find(num_d[result[ptr_last - 1]])]
+                    ptr_last = uf.dfind(result[ptr_last - 1])
                 else:
                     ptr_last -= 1
             else:
-                dl = d[uf.find(num_d[result[dl]])]
-                result[dl] = taskSortedArr[i]
+                dl = uf.dfind(result[dl])
+                result[dl] = i
+
+        uf.d_set(i, dl - 1)
 
         if dl + 1 != n and result[dl + 1] is not None:
-            uf.union(uf.find(i), uf.find(num_d[result[dl + 1]]))
-            d[uf.find(i)] = dl - 1
+            uf.union(i, result[dl + 1])
 
         if dl - 1 != -1 and result[dl - 1] is not None:
-            m = d[uf.find(num_d[result[dl - 1]])]
-            uf.union(uf.find(i), uf.find(num_d[result[dl - 1]]))
-            d[uf.find(i)] = m
+            uf.union(i, result[dl - 1])
+
+    for i in range(n):
+        result[i] = taskSortedArr[result[i]]
 
     return result, f
 
